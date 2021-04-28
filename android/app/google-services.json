@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "41303691094",
+    "project_id": "tambak-72d23",
+    "storage_bucket": "tambak-72d23.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:41303691094:android:c29a901168b542e6e0d0f7",
+        "android_client_info": {
+          "package_name": "com.funedge.tambak"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "41303691094-0v07ui37bj8uledjo21m1kn2fai3gk4q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBY8v5Ox46s9FNtvNCo5i3a7SU-EX4HIa8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "41303691094-0v07ui37bj8uledjo21m1kn2fai3gk4q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
