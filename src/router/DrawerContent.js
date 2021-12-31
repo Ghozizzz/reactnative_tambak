@@ -11,10 +11,10 @@ import {
   DrawerItem
 } from '@react-navigation/drawer';
 import { AuthContext } from '../router/AuthProvider';
+import {user} from '../config/firebase';
 
 export function DrawerContent(props) {
   const { logout } = useContext(AuthContext);
-
   return(
       <View style={{flex:1}}>
           <DrawerContentScrollView {...props}>
@@ -22,12 +22,12 @@ export function DrawerContent(props) {
                   <View style={styles.userInfoSection}>
                       <View style={{flexDirection:'row',marginTop: 15}}>
                           <Avatar.Image 
-                              source={require('../assets/bene.png')}
+                              source={require('../assets/app_icon.jpeg')}
                               size={50}
                           />
                           <View style={{marginLeft:15, flexDirection:'column'}}>
-                              <Title style={styles.title}>John Doe</Title>
-                              <Caption style={styles.caption}>@j_doe</Caption>
+                              <Title style={styles.title}>{user.displayName}</Title>
+                              <Caption style={styles.caption}>{user.email}</Caption>
                           </View>
                       </View>
                   </View>
@@ -40,6 +40,10 @@ export function DrawerContent(props) {
                       <DrawerItem
                           label="Data Transaksi"
                           onPress={() => {props.navigation.navigate('Data Transaksi')}}
+                      />
+                      <DrawerItem
+                          label="Profile"
+                          onPress={() => {props.navigation.navigate('Profile')}}
                       />
                   </Drawer.Section>
                   <Drawer.Section style={styles.drawerSection}>

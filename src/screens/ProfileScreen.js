@@ -1,17 +1,23 @@
 import React, {useContext, useState} from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import FormInput from '../components/Form/Input';
 import FormButton from '../components/Form/Button';
 import stylesg from '../styles';
 // import { Icon } from 'react-native-elements';
 import { Button, Appbar  } from 'react-native-paper';
+import {user} from '../config/firebase';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {windowHeight, windowWidth} from '../components/utils/Dimentions';
+import { AuthContext } from '../router/AuthProvider';
 
-const HomeScreen = ({navigation}) => {
+const ProfileScreen = ({navigation}) => {
+  const [name, setName] = useState();
+  const { update } = useContext(AuthContext);
 
     return (
       <View style={stylesg.container}>
         <Appbar.Header>
-          <Appbar.Content title="Home"/>
+          <Appbar.Content title="Profile"/>
           <Appbar.Action icon="dots-vertical" onPress={() => navigation.openDrawer()} />
         </Appbar.Header>
         {/* <View style={stylesg.headerContainer}>
@@ -24,24 +30,34 @@ const HomeScreen = ({navigation}) => {
         </View> */}
 
         <ScrollView contentContainerStyle={styles.container}>
-          <FormButton
-            buttonTitle="Data Transaksi"
-            onPress={() => navigation.navigate("Data Transaksi")}
+          <Text>Email</Text>
+          <View style={styles.inputContainer}>
+            <View style={styles.iconStyle}>
+              <AntDesign name={'user'} size={25} color="#666" />
+            </View>
+            <Text style={styles.input}>{user.email}</Text>
+          </View>
+          
+          <Text>Name</Text>
+          <FormInput
+            labelValue={user.displayName}
+            onChangeText={(userName) => setName(userName)}
+            placeholderText="Your name"
+            iconType="user"
+            autoCapitalize="none"
+            autoCorrect={false}
           />
+
           <FormButton
-            buttonTitle="Master Kolam"
-            onPress={() => navigation.navigate("Master Kolam")}
-          />
-          <FormButton
-            buttonTitle="Master Ikan"
-            onPress={() => navigation.navigate("Master Ikan")}
+            buttonTitle="Update"
+            onPress={() => {update(name)}}
           />
         </ScrollView>
       </View>
     );
 };
 
-export default HomeScreen;
+export default ProfileScreen;
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',

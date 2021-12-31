@@ -1,127 +1,222 @@
-import React, {Component} from 'react';
-import { Alert } from 'react-native';
-import {StyleSheet, View, TouchableOpacity, Text, TextInput} from 'react-native';
+import React, {useState,useEffect} from 'react';
+import {StyleSheet, View, TouchableOpacity, Text, Button, Alert, TextInput } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
+// import { Searchbar } from 'react-native-paper';
 import {Picker} from '@react-native-picker/picker';
-import stylesg from '../../styles';
-import {fr} from '../../config/firebase';
+import Spinner from 'react-native-loading-spinner-overlay';
+import customcss from '../../styles';
+import {db, fr, user} from '../../config/firebase';
+import moment from "moment";
+import DropDownPicker from 'react-native-dropdown-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-export default class TrxAdd extends Component {
-  constructor(props) {
-    super(props)
-  
-    this.state = {
-      kolamList: [],
-      selectedKolam : '',
-      nama: '',
-      disabled: false
-    }
-  }
-  
+const TrxAdd = ({navigation}) => {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState('');
+  const [kolam, setKolam] = useState([]);
+  const [sikan, setSikan] = useState('');
+  const [ikan, setIkan] = useState([]);
+  const [disabled, setDisabled] = useState(false);
+  const [show, setShow] = useState(false);
+  const [tgl, setTgl] = useState(new Date());
+  const [loadingSpinner, setLoadingSpinner] = useState(false);
 
-  onSubmit = () => {
-    if(this.state.nama == ''){
-      alert('Silahkan Input Nama ...');
+  const onSubmit = () => {
+    if(value == ''){
+      alert('Silahkan Pilih Kolam ...');
+      return false;
+    }else if(sikan == ''){
+      alert('Silahkan Pilih Ikan ...');
       return false;
     }else{
-      this.setState({
-        disabled: true,
-      });
-      fr.collection('MasterIkan')
-        .add({
-          name: this.state.nama
-        })
-        .then(() => {
-          Alert.alert(
-            'Data Ikan berhasil di Tambah'
-          );
-          this.setState({
-            nama: '',
-            disabled: false,
-          });
-          this.props.navigation.navigate("Master Ikan")
-        })
-        .catch((error) => {
-          this.setState({
-            disabled: false,
-          });
-          console.error("Error adding document: ", error);
+      setLoadingSpinner(true);
+      const kode_transaksi = moment(tgl).format("YYMMDDhhmmss");
+      
+      const transaksi = db.collection('Transaksi');
+      const batch = db.batch();
+      db.collection('MasterKolam').where("kode", "==", value).get()
+      .then(querySnapshot => {
+
+        const kolam_doc = db.collection('MasterKolam').doc(querySnapshot.docs[0].id)
+        
+        batch.update(kolam_doc, {
+          status: 1
         });
+        batch.set(transaksi.doc(), {
+          kode_transaksi: kode_transaksi,
+          kolam: value,
+          kolam_name: querySnapshot.docs[0].data().name,
+          ikan: sikan,
+          tanggal: tgl,
+          status: 0,
+          sync: 0,
+          countHari: 0,
+          jumlah: 0,
+          berat: 0,
+          created_by: user.email,
+          created_at: new Date()
+        })
+        
+        if(batch.commit()){
+          Alert.alert(
+            'Data Transaksi berhasil di Tambah'
+          );
+          setLoadingSpinner(false);
+          setDisabled(false);
+          navigation.navigate('Data Transaksi')
+        }else{
+          Alert.alert(
+            'Data Transaksi gagal di Tambah'
+          );
+        }
+      })
     }
   }
 
-  get_selected_kolam = (itemValue) => {
-    console.log(itemValue);
-    // this.setState({
-    //   selectedKolam: itemValue
-    // });
+  const get_selected_kolam = (itemValue) => {
+    setKolam(itemValue)
   }
+
+  const get_selected_ikan = (itemValue) => {
+    setIkan(itemValue)
+  }
+
+  const gantiTgl = (event, selectedDate) => {
+    const currentDate = selectedDate || tgl;
+    setTgl(currentDate);
+    setShow(false)
+  }
+
+  const showMode = () => {
+    setShow(true)
+  };
   
-  async get_kolam_list(){
-    return fr.collection('MasterKolam').orderBy('kode','asc').get().then((querySnapshot) => {
+  useEffect(()=>{
+    get_kolam_list()
+    get_ikan_list()
+  }, []);
+
+  const get_kolam_list = async () => {
+    return fr.collection('MasterKolam').where('status','==',0).orderBy('name','asc').get().then((querySnapshot) => {
         const kolamList = [];
         querySnapshot.forEach((doc) => {
           const { name, kode } = doc.data()
       
           kolamList.push({
-            name,
-            kode
+            label: name,
+            value: kode
           })
         });
-        this.setState({ 
-          kolamList
-        })
+        setKolam(kolamList)
+        // console.log(kolam);
+      })
+      .catch((error) => {
+        console.error("Error get document: ", error);
+      }); 
+  }
+    
+  const get_ikan_list = async () => {
+    return fr.collection('MasterIkan').orderBy('name','asc').get().then((querySnapshot) => {
+        const ikanList = [];
+        querySnapshot.forEach((doc) => {
+          const { name, kode } = doc.data()
+      
+          ikanList.push({
+            name
+          })
+        });
+        setIkan(ikanList)
+        // console.log(ikan);
       })
       .catch((error) => {
         console.error("Error get document: ", error);
       }); 
   }
 
-  async componentDidMount(){
-    await this.get_kolam_list()
-  }
-
-  render() {
-    let kolamItems = this.state.kolamList.map( (s, i) => {
-      return <Picker.Item key={i} value={s.kode} label={s.name} />
-    });
+    // let kolamItems = this.state.kolamList.map( (s, i) => {
+    //   return <Picker.Item key={i} value={s.kode} label={s.name} />
+    // });
+    
+    const ikanItems = () => {
+      return ikan.map( (s, i) => {
+        return <Picker.Item key={i} value={s.name} label={s.name} />
+      });
+    }
+    
+  // const renderIkantList = () => {
+  //   return ikan.map((product) => {
+  //     return <Picker.item label={product.name} value={product} />
+  //   })
+  // }
 
     return (
       <View style={styles.pages}>
-        <Text>Jenis Ikan</Text>
-        <TextInput placeholder="Jenis Ikan ..." style={stylesg.inputText}
-          onChangeText = {(text) => this.setState({nama:text})}
-          value={this.state.nama}
-          namaState="nama"
-        ></TextInput>
-
-        <Text>Pilih Kolam</Text>
+        <Spinner
+          visible={loadingSpinner}
+          textContent={'Loading...'}
+          textStyle={customcss.spinnerTextStyle}
+        />
+        <Text style={styles.text}>Pilih Kolam</Text>
+        <DropDownPicker
+          searchable={true}
+          open={open}
+          value={value}
+          items={kolam}
+          setValue={setValue}
+          setItems={setKolam}
+          setOpen={setOpen}
+        />
+        
+        <Text style={styles.text}>Pilih Ikan</Text>
         <Picker
           selectedValue={''}
-          style={stylesg.picker}
-          onValueChange={(value) => this.get_selected_kolam(value)}
+          searchable={true}
+          style={customcss.picker}
+          onValueChange={(value) => setSikan(value)}
         >
-          <Picker.Item label="Please Select ..." value="" />
-          {kolamItems}
+          <Picker.Item label="Pilih Ikan ..." value="" />
+          {ikanItems()}
         </Picker>
 
-        <TouchableOpacity style={styles.tombol} disabled={this.state.disabled} onPress={() => this.onSubmit()}>
+        <Text style={styles.text}>Tanggal</Text>
+        <View style={{ flexDirection:'row', zIndex:0, justifyContent:'space-between' }}>
+          <TextInput style={styles.text} value={moment(tgl).format('YYYY-MM-DD')} />
+          <Button onPress={showMode} title="Pilih Tgl" />
+        </View>
+        {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={tgl}
+            mode='date'
+            is24Hour={true}
+            display="default"
+            onChange={gantiTgl}
+          />
+        )}
+
+        <TouchableOpacity style={styles.tombol} disabled={disabled} onPress={() => onSubmit()}>
           <Text style={styles.textTombol}>SUBMIT</Text>
         </TouchableOpacity>
       </View>
     );
-  }
 }
 
+export default TrxAdd;
 const styles = StyleSheet.create({
   pages: {
     flex: 1,
-    padding: 30,
+    paddingHorizontal: 15,
+    padding: 20
   },
   tombol: {
     backgroundColor: 'black',
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
+  },
+  text: {
+    marginTop: 5,
+    color: 'black',
   },
   textTombol: {
     color: 'white',

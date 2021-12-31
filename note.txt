@@ -1,0 +1,6 @@
+Tambah radio button, pilih panen / transfer (done)
+Kolom Transfer (done)
+View Transaksi by Kolam (done)
+Report filter tanggal start and end, pilih jenis ikan
+    - Jumlah Panen dan Berat Total terakhir
+    - List bawah graph kode_transaksi

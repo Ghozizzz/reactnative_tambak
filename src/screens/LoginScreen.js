@@ -19,7 +19,7 @@ const LoginScreen = ({navigation}) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
-        source={require('../assets/bene.png')}
+        source={require('../assets/app_icon.jpeg')}
         style={styles.logo}
       />
       <Text style={styles.text}>Funedge</Text>

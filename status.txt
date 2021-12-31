@@ -1,0 +1,5 @@
+Status trx
+
+0 = idle
+1 = selesai
+9 = dihapus / direject

@@ -18,5 +18,6 @@ if (!firebase.apps.length) {
 
 const fr = firestore();
 const db = firebase.firestore();
+const user = firebase.auth().currentUser;
 
-export {db, fr};
+export {db, fr, user, firebase};

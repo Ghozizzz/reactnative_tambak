@@ -6,15 +6,14 @@ const styles = StyleSheet.create({
   //   flex: 1,
   //   backgroundColor: "white",
   // },
-  // headerText: {
-  //   color: 'black',
-  //   fontSize: 20,
-  //   fontWeight: '500'
-  // },
+  headerText: {
+    color: 'black',
+    fontSize: 20,
+    fontWeight: '500'
+  },
   container: {
     flex: 1
   },
-
   headerContainer: {
     zIndex: 100,
     resizeMode: 'contain',
@@ -22,9 +21,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     textAlignVertical: 'top',
     width: '100%',
-    height: 40,
+    height: 50,
     paddingHorizontal: 20,
-    paddingVertical: 8,
+    paddingVertical: 10,
     backgroundColor: '#1976D2'
   },
   logo_img: {
@@ -124,6 +123,32 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase'
   },
 
+  //Button normal
+  tombol: {
+    backgroundColor: 'black',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  tombol_edit: {
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  tombol_danger: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  textTombol: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 16,
+  },
+
   //StyledTextInput
   textinput_container :{
     justifyContent: 'center',
@@ -217,7 +242,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#1976D2',
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-  }
+  },
+  
+  spinnerTextStyle: {
+    color: '#FFF'
+  },
 })
 
 export default styles;

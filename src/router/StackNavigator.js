@@ -9,13 +9,14 @@ import MKolamForm from '../screens/Master/MKolamForm';
 
 import TrxScreen from '../screens/Transaksi/TrxScreen';
 import TrxAdd from '../screens/Transaksi/TrxAdd';
+import TrxDetail from '../screens/Transaksi/TrxDetail';
 
 const Stack = createStackNavigator();
 
 const MikanStackNavigator = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Master Ikan" component={MikanScreen}></Stack.Screen>
+      <Stack.Screen options={{headerShown: false}} name="Master Ikan" component={MikanScreen}></Stack.Screen>
       <Stack.Screen name="Master Ikan Form" component={MikanForm}></Stack.Screen>
     </Stack.Navigator>
   )
@@ -24,7 +25,7 @@ const MikanStackNavigator = () => {
 const MKolamStackNavigator = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Master Kolam" component={MKolamScreen}></Stack.Screen>
+      <Stack.Screen options={{headerShown: false}} name="Master Kolam" component={MKolamScreen}></Stack.Screen>
       <Stack.Screen name="Master Kolam Form" component={MKolamForm}></Stack.Screen>
     </Stack.Navigator>
   )
@@ -33,8 +34,9 @@ const MKolamStackNavigator = () => {
 const TrxStackNavigator = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Data Transaksi" component={TrxScreen}></Stack.Screen>
+      <Stack.Screen options={{headerShown: false}} name="Data Transaksi" component={TrxScreen}></Stack.Screen>
       <Stack.Screen name="Add Transaksi" component={TrxAdd}></Stack.Screen>
+      <Stack.Screen name="Detail Transaksi" component={TrxDetail}></Stack.Screen>
     </Stack.Navigator>
   )
 }

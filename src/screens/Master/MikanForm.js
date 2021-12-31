@@ -2,7 +2,10 @@ import React, {Component} from 'react';
 import { Alert } from 'react-native';
 import {StyleSheet, View, TouchableOpacity, Text, TextInput} from 'react-native';
 import { Input } from 'react-native-elements';
+import NetInfo from "@react-native-community/netinfo";
+import Spinner from 'react-native-loading-spinner-overlay';
 import {db} from '../../config/firebase';
+import customcss from '../../styles';
 
 export default class MikanForm extends Component {
   constructor(props) {
@@ -10,10 +13,11 @@ export default class MikanForm extends Component {
   
     this.state = {
        nama : '',
+       loadingSpinner: false,
     }
   }
   state = {
-    disabled: false
+    disabled: false,
   }
 
   onSubmit = () => {
@@ -23,12 +27,38 @@ export default class MikanForm extends Component {
     }else{
       this.setState({
         disabled: true,
+        loadingSpinner: true,
       });
-      db.collection('MasterIkan')
-        .add({
-          name: this.state.nama
-        })
-        .then(() => {
+      
+      NetInfo.fetch().then(status => {
+        if (status.isConnected==true) {
+          db.collection('MasterIkan')
+            .add({
+              name: this.state.nama
+            })
+            .then(() => {
+              Alert.alert(
+                'Data Ikan berhasil di Tambah'
+              );
+              this.state.nama = '';
+              this.setState({
+                disabled: false,
+                loadingSpinner: false,
+              });
+              this.props.navigation.navigate("Master Ikan")
+            })
+            .catch((error) => {
+              this.setState({
+                disabled: false,
+                loadingSpinner: false,
+              });
+              console.error("Error adding document: ", error);
+            });
+        }else{
+          db.collection('MasterIkan')
+          .add({
+            name: this.state.nama
+          })
           Alert.alert(
             'Data Ikan berhasil di Tambah'
           );
@@ -37,13 +67,8 @@ export default class MikanForm extends Component {
             disabled: false,
           });
           this.props.navigation.navigate("Master Ikan")
-        })
-        .catch((error) => {
-          this.setState({
-            disabled: false,
-          });
-          console.error("Error adding document: ", error);
-        });
+        }
+      })
     }
   }
 
@@ -57,8 +82,13 @@ export default class MikanForm extends Component {
           namaState="nama"
         ></TextInput>
          */}
+        <Spinner
+          visible={this.state.loadingSpinner}
+          textContent={'Loading...'}
+          textStyle={customcss.spinnerTextStyle}
+        />
         <Text>Jenis Ikan</Text>
-        <Input
+        <Input style={styles.fontitem}
           placeholder='Jenis Ikan ...'
           onChangeText = {(text) => this.setState({nama:text})}
           value={this.state.nama}
@@ -89,4 +119,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
   },
+  fontitem: {
+    color: 'black'
+  }
 });

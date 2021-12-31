@@ -1,7 +1,8 @@
 import React, {Component, useState} from 'react';
-import { StyleSheet, View, Text, FlatList, SafeAreaView } from 'react-native';
+import { StyleSheet, View, Text, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ListItem, Button, Icon } from 'react-native-elements';
+import { Appbar  } from 'react-native-paper';
 import StyledButton from '../../components/Styled/button';
 import stylesg from '../../styles';
 import {getIkan, deleteIkan} from '../../api/IkanApi';
@@ -59,41 +60,52 @@ export default class MikanScreen extends Component {
   }
 
   render() {
-    return this.state.ikanList.length > 0 ? 
-      <View style={styles.container}>
-        <ScrollView>
-          {this.state.ikanList.map((item, index) => (
-              <ListItem key={index} bottomDivider>
-                <ListItem.Content>
-                  <ListItem.Title>{item.name}</ListItem.Title>
-                </ListItem.Content>
-                <Icon
-                  name="delete"
-                  size={15}
-                  color="black"
-                  reverse
-                  onPress={() => {
-                    this.setState(prevState => ({ selectedIndex: prevState.selectedIndex = index }))
-                    this.deletePressed(item.id)
-                  }}
-                />
-              </ListItem>
-            ))
-          }
-        </ScrollView>
+    let dataviewnya;
+    if( this.state.ikanList.length > 0){
+      dataviewnya = <ScrollView>
+      {this.state.ikanList.map((item, index) => (
+          <ListItem key={index} bottomDivider>
+            <ListItem.Content>
+              <ListItem.Title>{item.name}</ListItem.Title>
+            </ListItem.Content>
+            <Icon
+              name="delete"
+              size={15}
+              color="black"
+              reverse
+              onPress={() => {
+                this.setState(prevState => ({ selectedIndex: prevState.selectedIndex = index }))
+                this.deletePressed(item.id)
+              }}
+            />
+          </ListItem>
+        ))
+      }
+      </ScrollView>
+    }else{
+      dataviewnya = <ScrollView style={{marginTop:10}}>
+        <Text style={stylesg.emptyTitle}>No Ikan found</Text>
+        <View style={{height:50}}></View>
+      </ScrollView>
+    }
+    return <View style={styles.container}>
+        <Appbar.Header>
+          <Appbar.Content title="Data Ikan"/>
+          <Appbar.Action icon="dots-vertical" onPress={() => this.props.navigation.openDrawer()} />
+        </Appbar.Header>
+        { this.state.loading ? 
+          <View style={[styles.container, styles.horizontal]}>
+            <ActivityIndicator size="small" color="#0000ff" />
+          </View>: dataviewnya
+        }
         <View style={{height:50}}></View>
         <View style={stylesg.button_container_wrapper}>
-          <StyledButton type="primary" text="Tambah Master Ikan" onPress={() => this.props.navigation.navigate("Master Ikan Form")}/>
-        </View>
-      </View>
-      :
-      <View style={stylesg.masterContainer}>
-        <ScrollView style={{marginTop:10}}>
-          <Text style={stylesg.emptyTitle}>No Ikan found</Text>
-          <View style={{height:50}}></View>
-        </ScrollView>
-        <View style={stylesg.button_container_wrapper}>
-          <StyledButton type="primary" text="Tambah Master Ikan" onPress={() => this.props.navigation.navigate("Master Ikan Form")}/>
+          <StyledButton type="primary" text="Tambah Master Ikan" onPress={() => 
+            {if(this.state.loading==false){
+              this.props.navigation.navigate("Master Ikan Form")
+            }else{
+              alert('Harap tunggu loading selesai');
+            }}}/>
         </View>
       </View>
   }
@@ -101,7 +113,8 @@ export default class MikanScreen extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    justifyContent: "center"
   },
   listItem: {
     marginTop: 8,
@@ -110,4 +123,9 @@ const styles = StyleSheet.create({
   titleStyle: {
     fontSize: 30,
   },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10
+  }
 });

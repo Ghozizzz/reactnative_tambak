@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, Pressable, Alert } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import styles from '../../styles';
 
 const StyledButton = (props) => {
@@ -26,9 +27,9 @@ const StyledButton = (props) => {
 
   return (
     <View style={styles.button_container}>
-      <Pressable style={[styles.button, {backgroundColor: bgColor}]} onPress={onPress}>
+      <TouchableOpacity style={[styles.button, {backgroundColor: bgColor}]} onPress={onPress}>
         <Text  style={[styles.button_text, { color: txtColor }]}>{props.text}</Text>
-      </Pressable>
+      </TouchableOpacity>
     </View>
   )
 }
